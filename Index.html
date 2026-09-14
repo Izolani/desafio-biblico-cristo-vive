@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desafio Bíblico Cristo Vive</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/basecoat.cdn.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+  <style>
+/* Skip artifact shell — fixed styles served beside every artifact.
+   Complements basecoat; artifacts override --accent for their own identity. */
+:root {
+  color-scheme: light dark;
+  --accent: #2563eb;
+  --accent-contrast: #ffffff;
+  --accent-text: color-mix(in srgb, var(--accent) 72%, #000);
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --text: #14171f;
+  --text-muted: #5b6472;
+  --border: rgba(20, 23, 31, 0.10);
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(20, 23, 31, 0.08);
+  --space: 16px;
+}
+/* Theme resolution. Without data-theme the viewer's system preference decides,
+   as it always did. With it, the artifact's own choice wins in BOTH directions:
+   a page that hardcodes one palette must not be handed the opposite set of
+   tokens by the machine it happens to be opened on. The dark values appear
+   twice because a media query cannot be folded into a selector list.
+   The attribute sits inside :where() so these blocks keep the specificity of a
+   bare :root — the page's own <style> is linked after this file and must go on
+   overriding any token it wants, exactly as it could before. */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --accent-text: color-mix(in srgb, var(--accent) 78%, #fff);
+    --bg: #101318;
+    --surface: #181c23;
+    --text: #eef1f6;
+    --text-muted: #9aa4b2;
+    --border: rgba(238, 241, 246, 0.12);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+}
+:root:where([data-theme="dark"]) {
+  color-scheme: dark;
+  --accent-text: color-mix(in srgb, var(--accent) 78%, #fff);
+  --bg: #101318;
+  --surface: #181c23;
+  --text: #eef1f6;
+  --text-muted: #9aa4b2;
+  --border: rgba(238, 241, 246, 0.12);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+:root:where([data-theme="light"]) { color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+
+.shell-container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.shell-section { padding: calc(var(--space) * 2) 0; }
+.shell-grid { display: grid; gap: var(--space); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.shell-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: var(--space); }
+.shell-footer { padding: 24px 0 40px; color: var(--text-muted); font-size: 13px; }
+
+.shell-hero { padding: calc(var(--space) * 3) 0 calc(var(--space) * 2); }
+.shell-hero h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0 0 10px; text-wrap: balance; }
+.shell-hero p { color: var(--text-muted); max-width: 60ch; margin: 0; }
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space);
+}
+
+.kpi { display: flex; flex-direction: column; gap: 4px; }
+.kpi .kpi-value { font-size: 28px; font-weight: 650; line-height: 1.1; }
+.kpi .kpi-label { font-size: 13px; color: var(--text-muted); }
+.kpi .kpi-delta { font-size: 12.5px; font-weight: 600; }
+.kpi .kpi-delta.up { color: #0a8f3c; }
+.kpi .kpi-delta.down { color: #cf3131; }
+
+table.shell-table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.shell-table th {
+  text-align: left; font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600;
+}
+table.shell-table th, table.shell-table td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--border); }
+table.shell-table td.num, table.shell-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+
+.chart-box { width: 100%; min-height: 220px; }
+.chart-box svg { width: 100%; height: auto; display: block; }
+
+.muted { color: var(--text-muted); }
+.accent { color: var(--accent-text); }
+.shell-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent-text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .shell-fade { animation: shell-fade 400ms ease both; }
+  @keyframes shell-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+
+</style>
+  
+
+  <style>
+    :root {
+      --accent: #1d68c4;
+      --accent-light: #ebf3fd;
+      --accent-hover: #14509b;
+      --church-blue: #0f3e78;
+      --success: #1b873f;
+      --error: #d92d20;
+      --warning: #f79009;
+      --bg: #f5f8fc;
+      --surface: #ffffff;
+      --border: #d7e2ee;
+      --radius: 16px;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #1a2533;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Brand Header */
+    .church-topbar {
+      background: linear-gradient(135deg, var(--church-blue) 0%, var(--accent) 100%);
+      color: #ffffff;
+      padding: 16px 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(15, 62, 120, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .church-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-weight: 700;
+      opacity: 0.95;
+    }
+    .cross-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      font-size: 1.1rem;
+    }
+    .church-title {
+      margin: 4px 0 0;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .app-container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      flex: 1;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Scoreboard Card */
+    .global-score-bar {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .score-badge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .trophy-badge {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .score-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--church-blue);
+    }
+    .score-sub {
+      font-size: 0.78rem;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* Navigation header in sub-games */
+    .mode-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    /* Buttons */
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-decoration: none;
+    }
+    .btn-action:active {
+      transform: scale(0.97);
+    }
+    .btn-primary-blue {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(29, 104, 196, 0.25);
+    }
+    .btn-primary-blue:hover {
+      background: var(--accent-hover);
+    }
+    .btn-outline-blue {
+      background: #ffffff;
+      color: var(--accent);
+      border-color: #cbd5e1;
+    }
+    .btn-outline-blue:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      border-radius: 8px;
+    }
+
+    /* Grid for Modes */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .mode-card {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(15, 62, 120, 0.05);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .mode-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 24px rgba(29, 104, 196, 0.12);
+    }
+    .mode-icon {
+      font-size: 2.3rem;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .mode-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--church-blue);
+      margin: 0 0 6px 0;
+    }
+    .mode-desc {
+      font-size: 0.9rem;
+      color: #475569;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+    .mode-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Game views */
+    .game-view {
+      display: none;
+    }
+    .game-view.active {
+      display: block;
+      animation: fadeIn 0.22s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Quiz Styles */
+    .quiz-card {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .quiz-progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .quiz-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .question-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .answers-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .answer-btn {
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #1e293b;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.15s ease;
+    }
+    .answer-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .answer-btn.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #14532d !important;
+    }
+    .answer-btn.wrong {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #7f1d1d !important;
+    }
+    .feedback-box {
+      margin-top: 18px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .feedback-box.show {
+      display: block;
+      animation: fadeIn 0.2s;
+    }
+    .feedback-box.correct {
+      background: #ecfdf5;
+      border: 1px solid #6ee7b7;
+      color: #065f46;
+    }
+    .feedback-box.wrong {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+    }
+
+    /* Word Search Styles */
+    .wordsearch-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(22px, 34px));
+      gap: 4px;
+      user-select: none;
+      touch-action: none;
+      background: #ffffff;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin: 0 auto;
+    }
+    .grid-cell {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: clamp(0.75rem, 2.5vw, 1.05rem);
+      background: #f1f5f9;
+      border-radius: 6px;
+      color: #1e293b;
+      cursor: pointer;
+      transition: background 0.1s, transform 0.1s;
+    }
+    .grid-cell.selected {
+      background: #bfdbfe;
+      color: var(--church-blue);
+      transform: scale(0.95);
+    }
+    .grid-cell.found {
+      background: #86efac !important;
+      color: #064e3b !important;
+    }
+    .words-badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 600px;
+    }
+    .word-pill {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      transition: all 0.2s ease;
+    }
+    .word-pill.found {
+      background: #22c55e;
+      color: #ffffff;
+      border-color: #22c55e;
+      text-decoration: line-through;
+    }
+
+    /* Memory Game Styles */
+    .memory-stats {
+      display: flex;
+      justify-content: space-around;
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--church-blue);
+    }
+    .memory-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .memory-card {
+      aspect-ratio: 1;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .memory-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.5s;
+      transform-style: preserve-3d;
+      border-radius: 12px;
+    }
+    .memory-card.flipped .memory-inner,
+    .memory-card.matched .memory-inner {
+      transform: rotateY(180deg);
+    }
+    .memory-front, .memory-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+      padding: 6px;
+      box-sizing: border-box;
+    }
+    .memory-front {
+      background: linear-gradient(135deg, var(--church-blue), var(--accent));
+      color: #ffffff;
+      font-size: 1.8rem;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .memory-back {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      transform: rotateY(180deg);
+    }
+    .memory-card.matched .memory-back {
+      background: #f0fdf4;
+      border-color: #22c55e;
+    }
+    .memory-emoji {
+      font-size: 1.7rem;
+      line-height: 1.2;
+    }
+    .memory-text {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    /* Hangman Styles */
+    .hangman-container {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .hangman-hint {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin: 12px 0 18px;
+      font-size: 0.95rem;
+      color: var(--church-blue);
+      font-weight: 600;
+    }
+    .hangman-gallows {
+      width: 180px;
+      height: 170px;
+      margin: 0 auto 12px;
+    }
+    .word-slots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 18px 0;
+      flex-wrap: wrap;
+    }
+    .letter-slot {
+      width: 32px;
+      height: 42px;
+      border-bottom: 3px solid var(--church-blue);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--church-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+    }
+    .keyboard-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .key-btn {
+      width: 38px;
+      height: 42px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .key-btn:hover:not(:disabled) {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+    .key-btn.correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #14532d;
+    }
+    .key-btn.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+      opacity: 0.6;
+    }
+
+    /* Riddles Styles */
+    .riddle-card {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+    .riddle-question {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--church-blue);
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+    .riddle-answer-box {
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      border-radius: 12px;
+      font-weight: 700;
+      color: #065f46;
+      display: none;
+    }
+    .riddle-answer-box.show {
+      display: block;
+      animation: fadeIn 0.2s;
+    }
+
+    /* Modals & Overlays */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+    .modal-backdrop.active {
+      display: flex;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: var(--radius);
+      max-width: 500px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--church-blue);
+      margin: 0 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Victory Card */
+    .victory-modal-content {
+      text-align: center;
+      padding: 24px 16px;
+    }
+    .victory-emoji {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      display: block;
+      animation: bounce 0.6s infinite alternate;
+    }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 24px 16px;
+      color: #64748b;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+      margin-top: auto;
+    }
+
+    /* Form control */
+    .text-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .text-input:focus {
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 480px) {
+      .church-title { font-size: 1.35rem; }
+      .trophy-badge { font-size: 1.3rem; }
+      .score-val { font-size: 1.2rem; }
+      .key-btn { width: 32px; height: 38px; font-size: 0.85rem; }
+      .letter-slot { width: 26px; height: 36px; font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Church Header -->
+  <header class="church-topbar">
+    <div class="church-brand">
+      <span class="cross-icon" aria-hidden="true">✝</span>
+      <span>Igreja Evangélica Cristo Vive</span>
+      <span class="cross-icon" aria-hidden="true">🕊️</span>
+    </div>
+    <h1 class="church-title">Desafio Bíblico Cristo Vive</h1>
+  </header>
+
+  <main class="app-container">
+
+    <!-- Global Score Bar -->
+    <div class="global-score-bar">
+      <div class="score-badge-wrap">
+        <span class="trophy-badge">🏆</span>
+        <div>
+          <div class="score-sub">Placar Geral</div>
+          <div class="score-val" id="globalScoreText">0 pts</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button id="soundToggleBtn" class="btn-action btn-outline-blue btn-sm" aria-label="Ligar ou desligar som">
+          <span id="soundIcon">🔊 Som</span>
+        </button>
+        <button id="howToPlayBtn" class="btn-action btn-outline-blue btn-sm">
+          ❓ Como Jogar
+        </button>
+        <button id="resetScoreBtn" class="btn-action btn-outline-blue btn-sm" title="Zerar Pontuação Geral">
+          🔄 Zerar
+        </button>
+      </div>
+    </div>
+
+    <!-- VIEW 0: MENU PRINCIPAL -->
+    <section id="viewMenu" class="game-view active">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <p style="font-size: 1.05rem; color: #475569; margin: 0 auto; max-width: 600px;">
+          Bem-vindo! Teste seus conhecimentos na Palavra de Deus, divirta-se em família e aprenda brincando. Escolha um modo abaixo:
+        </p>
+      </div>
+
+      <div class="modes-grid">
+        <!-- Modo 1: Quiz -->
+        <div class="mode-card" onclick="gameEngine.startQuiz()">
+          <div>
+            <span class="mode-icon">📖</span>
+            <h2 class="mode-title">Quiz Bíblico</h2>
+            <p class="mode-desc">15 perguntas com 4 alternativas e referências bíblicas. Ganhe 10 pts por acerto!</p>
+          </div>
+          <div class="mode-footer">
+            <span>15 Questões</span>
+            <span>Jogar &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Modo 2: Caça-Palavras -->
+        <div class="mode-card" onclick="gameEngine.startWordSearch()">
+          <div>
+            <span class="mode-icon">🔍</span>
+            <h2 class="mode-title">Caça-Palavras</h2>
+            <p class="mode-desc">Encontre os 8 Frutos do Espírito (Gálatas 5:22-23) na grade interativa.</p>
+          </div>
+          <div class="mode-footer">
+            <span>8 Frutos (+50 pts)</span>
+            <span>Jogar &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Modo 3: Memória -->
+        <div class="mode-card" onclick="gameEngine.startMemory()">
+          <div>
+            <span class="mode-icon">⭐</span>
+            <h2 class="mode-title">Jogo da Memória</h2>
+            <p class="mode-desc">Conecte os personagens bíblicos aos seus símbolos correspondentes.</p>
+          </div>
+          <div class="mode-footer">
+            <span>8 Pares</span>
+            <span>Jogar &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Modo 4: Forca -->
+        <div class="mode-card" onclick="gameEngine.startHangman()">
+          <div>
+            <span class="mode-icon">✝️</span>
+            <h2 class="mode-title">Jogo da Forca</h2>
+            <p class="mode-desc">Adivinhe palavras bíblicas pelas dicas antes de completar os 6 erros.</p>
+          </div>
+          <div class="mode-footer">
+            <span>Dicas Bíblicas</span>
+            <span>Jogar &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Modo 5: Charadas -->
+        <div class="mode-card" onclick="gameEngine.startRiddles()">
+          <div>
+            <span class="mode-icon">🙏</span>
+            <h2 class="mode-title">Charadas Bíblicas</h2>
+            <p class="mode-desc">"O que sou? Quem sou eu?" — 10 charadas instigantes com resposta e palpites.</p>
+          </div>
+          <div class="mode-footer">
+            <span>10 Desafios</span>
+            <span>Jogar &rarr;</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 1: QUIZ BÍBLICO -->
+    <section id="viewQuiz" class="game-view">
+      <div class="mode-nav">
+        <button class="btn-action btn-outline-blue btn-sm" onclick="gameEngine.goToMenu()">
+          &larr; Voltar ao Menu
+        </button>
+        <span style="font-weight: 700; color: var(--church-blue);" id="quizScoreHeader">
+          Acertos: 0/15
+        </span>
+      </div>
+
+      <div class="quiz-card" id="quizCard">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quizProgressFill"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: #64748b; font-weight: 600;">
+          <span id="quizIndexText">Pergunta 1 de 15</span>
+          <span>+10 pontos</span>
+        </div>
+        <h2 class="question-title" id="quizQuestionText">Carregando pergunta...</h2>
+
+        <div class="answers-grid" id="quizOptionsGrid">
+          <!-- Botões injetados dinamicamente -->
+        </div>
+
+        <div class="feedback-box" id="quizFeedbackBox">
+          <!-- Feedback de acerto ou erro + versículo -->
+        </div>
+
+        <div style="margin-top: 18px; text-align: right;">
+          <button id="quizNextBtn" class="btn-action btn-primary-blue" style="display: none;" onclick="gameEngine.nextQuizQuestion()">
+            Próxima Pergunta &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Fim de jogo do Quiz -->
+      <div class="quiz-card" id="quizResultCard" style="display: none; text-align: center;">
+        <span style="font-size: 3.5rem; display: block; margin-bottom: 8px;">🎉</span>
+        <h2 style="font-size: 1.5rem; color: var(--church-blue); margin-bottom: 8px;">Quiz Concluído!</h2>
+        <p style="font-size: 1.1rem; color: #334155; margin-bottom: 16px;" id="quizFinalMsg"></p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-action btn-primary-blue" onclick="gameEngine.startQuiz()">Jogar Novamente</button>
+          <button class="btn-action btn-outline-blue" onclick="gameEngine.goToMenu()">Voltar ao Menu</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: CAÇA-PALAVRAS -->
+    <section id="viewWordSearch" class="game-view">
+      <div class="mode-nav">
+        <button class="btn-action btn-outline-blue btn-sm" onclick="gameEngine.goToMenu()">
+          &larr; Voltar ao Menu
+        </button>
+        <span style="font-weight: 700; color: var(--church-blue);" id="wsCounterText">
+          Encontrados: 0 / 8
+        </span>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 14px;">
+        <h2 style="font-size: 1.2rem; margin: 0 0 4px; color: var(--church-blue);">Os Frutos do Espírito (Gálatas 5:22-23)</h2>
+        <p style="font-size: 0.85rem; color: #64748b; margin: 0;">
+          Toque/clique na 1ª letra e depois na última para selecionar a palavra. (Horizontal, vertical ou diagonal)
+        </p>
+      </div>
+
+      <div class="wordsearch-layout">
+        <div class="word-grid" id="wsGrid">
+          <!-- Células geradas via JS -->
+        </div>
+
+        <div class="words-badge-list" id="wsBadges">
+          <!-- Badges de palavras -->
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-action btn-outline-blue btn-sm" onclick="gameEngine.startWordSearch()">
+            🔄 Embaralhar Grade
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: JOGO DA MEMÓRIA -->
+    <section id="viewMemory" class="game-view">
+      <div class="mode-nav">
+        <button class="btn-action btn-outline-blue btn-sm" onclick="gameEngine.goToMenu()">
+          &larr; Voltar ao Menu
+        </button>
+        <span style="font-weight: 700; color: var(--church-blue);" id="memoryMatchesText">
+          Pares: 0 / 8
+        </span>
+      </div>
+
+      <div class="memory-stats">
+        <span>⏱️ Tempo: <strong id="memoryTimerText">00:00</strong></span>
+        <span>🎯 Tentativas: <strong id="memoryMovesText">0</strong></span>
+      </div>
+
+      <div class="memory-board" id="memoryBoard">
+        <!-- 16 cartas injetadas via JS -->
+      </div>
+    </section>
+
+    <!-- VIEW 4: FORCA -->
+    <section id="viewHangman" class="game-view">
+      <div class="mode-nav">
+        <button class="btn-action btn-outline-blue btn-sm" onclick="gameEngine.goToMenu()">
+          &larr; Voltar ao Menu
+        </button>
+        <span style="font-weight: 700; color: var(--church-blue);" id="hangmanWordIndex">
+          Palavra 1 de 8
+        </span>
+      </div>
+
+      <div class="hangman-container">
+        <!-- Gallows SVG -->
+        <svg class="hangman-gallows" viewBox="0 0 160 160" aria-label="Desenho da Forca">
+          <!-- Base & Poste -->
+          <line x1="20" y1="150" x2="140" y2="150" stroke="#0f3e78" stroke-width="5" stroke-linecap="round" />
+          <line x1="45" y1="150" x2="45" y2="20" stroke="#0f3e78" stroke-width="5" stroke-linecap="round" />
+          <line x1="45" y1="20" x2="105" y2="20" stroke="#0f3e78" stroke-width="5" stroke-linecap="round" />
+          <line x1="105" y1="20" x2="105" y2="40" stroke="#0f3e78" stroke-width="4" />
+          <line x1="45" y1="45" x2="70" y2="20" stroke="#0f3e78" stroke-width="4" />
+
+          <!-- Boneco (6 partes) -->
+          <!-- 1: Cabeça -->
+          <circle id="hm-part-1" cx="105" cy="52" r="12" stroke="#d92d20" stroke-width="3" fill="none" style="display:none;" />
+          <!-- 2: Tronco -->
+          <line id="hm-part-2" x1="105" y1="64" x2="105" y2="102" stroke="#d92d20" stroke-width="3" stroke-linecap="round" style="display:none;" />
+          <!-- 3: Braço esquerdo -->
+          <line id="hm-part-3" x1="105" y1="74" x2="90" y2="90" stroke="#d92d20" stroke-width="3" stroke-linecap="round" style="display:none;" />
+          <!-- 4: Braço direito -->
+          <line id="hm-part-4" x1="105" y1="74" x2="120" y2="90" stroke="#d92d20" stroke-width="3" stroke-linecap="round" style="display:none;" />
+          <!-- 5: Perna esquerda -->
+          <line id="hm-part-5" x1="105" y1="102" x2="92" y2="128" stroke="#d92d20" stroke-width="3" stroke-linecap="round" style="display:none;" />
+          <!-- 6: Perna direita -->
+          <line id="hm-part-6" x1="105" y1="102" x2="118" y2="128" stroke="#d92d20" stroke-width="3" stroke-linecap="round" style="display:none;" />
+        </svg>
+
+        <div class="hangman-hint" id="hangmanHintText">
+          Dica: ...
+        </div>
+
+        <div class="word-slots" id="hangmanSlots">
+          <!-- Letras descobertas ou vazias -->
+        </div>
+
+        <div id="hangmanMessage" style="margin: 10px 0; font-weight: 700; font-size: 1.05rem; min-height: 24px;"></div>
+
+        <div class="keyboard-grid" id="hangmanKeyboard">
+          <!-- Teclado A-Z -->
+        </div>
+
+        <div style="margin-top: 18px;">
+          <button id="hangmanNextBtn" class="btn-action btn-primary-blue" style="display: none;" onclick="gameEngine.nextHangmanWord()">
+            Próxima Palavra &rarr;
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: CHARADAS -->
+    <section id="viewRiddles" class="game-view">
+      <div class="mode-nav">
+        <button class="btn-action btn-outline-blue btn-sm" onclick="gameEngine.goToMenu()">
+          &larr; Voltar ao Menu
+        </button>
+        <span style="font-weight: 700; color: var(--church-blue);" id="riddleNavIndicator">
+          Charada 1 de 10
+        </span>
+      </div>
+
+      <div class="riddle-card">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 8px;">
+          <span>Desafio Bíblico</span>
+          <span>+10 pontos se acertar</span>
+        </div>
+        <div class="riddle-question" id="riddleQuestionText">
+          Carregando charada...
+        </div>
+
+        <form id="riddleForm" onsubmit="gameEngine.submitRiddleAnswer(event)">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+            <input type="text" id="riddleInput" class="text-input" style="flex: 1;" placeholder="Digite seu palpite aqui..." autocomplete="off">
+            <button type="submit" class="btn-action btn-primary-blue">Confirmar</button>
+          </div>
+        </form>
+
+        <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+          <button class="btn-action btn-outline-blue btn-sm" onclick="gameEngine.revealRiddleAnswer()">
+            💡 Revelar Resposta
+          </button>
+          <button id="riddleNextBtn" class="btn-action btn-primary-blue btn-sm" onclick="gameEngine.nextRiddle()">
+            Próxima Charada &rarr;
+          </button>
+        </div>
+
+        <div class="riddle-answer-box" id="riddleAnswerBox">
+          <!-- Resposta revelada -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: COMO JOGAR -->
+  <div class="modal-backdrop" id="modalHowToPlay" onclick="if(event.target===this) gameEngine.closeModal('modalHowToPlay')">
+    <div class="modal-box">
+      <h3 class="modal-title">📖 Como Jogar o Desafio Bíblico</h3>
+      <div style="font-size: 0.95rem; color: #334155; line-height: 1.6;">
+        <p><strong>Objetivo:</strong> Aprender e memorizar as Escrituras de forma divertida e empolgante com a <em>Igreja Evangélica Cristo Vive</em>!</p>
+        <ul style="padding-left: 20px; margin: 12px 0;">
+          <li><strong>Quiz Bíblico:</strong> Responda às 15 perguntas bíblicas (+10 pts por acerto).</li>
+          <li><strong>Caça-Palavras:</strong> Ache os 8 Frutos do Espírito na grade (+50 pts).</li>
+          <li><strong>Jogo da Memória:</strong> Encontre os 8 pares personagem/símbolo (+5 pts por par).</li>
+          <li><strong>Forca:</strong> Adivinhe o nome ou elemento bíblico antes de 6 erros (+15 pts).</li>
+          <li><strong>Charadas:</strong> Tente responder as 10 charadas bíblicas para somar pontos!</li>
+        </ul>
+        <p>Todos os pontos somam no seu <strong>Placar Geral</strong> e ficam salvos no seu aparelho. Compartilhe seu resultado com seus amigos e irmãos da igreja!</p>
+      </div>
+      <div style="text-align: right; margin-top: 18px;">
+        <button class="btn-action btn-primary-blue" onclick="gameEngine.closeModal('modalHowToPlay')">Entendido! Vamos Jogar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VITÓRIA UNIVERSAL -->
+  <div class="modal-backdrop" id="modalVictory" onclick="if(event.target===this) gameEngine.closeModal('modalVictory')">
+    <div class="modal-box victory-modal-content">
+      <span class="victory-emoji" id="vicEmoji">🏆</span>
+      <h3 class="modal-title" style="justify-content: center;" id="vicTitle">Parabéns!</h3>
+      <p style="color: #475569; font-size: 1.05rem; margin: 10px 0 20px;" id="vicMsg">Você completou o desafio!</p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-action btn-primary-blue" onclick="gameEngine.closeModal('modalVictory')">Continuar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div style="font-weight: 700; color: var(--church-blue); margin-bottom: 4px;">
+      ✝️ Igreja Evangélica Cristo Vive
+    </div>
+    <div>"Lâmpada para os meus pés é tua palavra e luz, para o meu caminho." — Salmos 119:105</div>
+  </footer>
+
+  <script>
+    /**
+     * Web Audio API Helper para efeitos sonoros leves e nativos
+     */
+    class SoundFX {
+      constructor() {
+        this.enabled = true;
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+      }
+      toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+      }
+      playCorrect() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15); // G5
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+      playWrong() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(140, now + 0.25);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+      playWin() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + (idx * 0.1);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        });
+      }
+    }
+
+    const sound = new SoundFX();
+
+    /**
+     * DADOS DOS JOGOS
+     */
+    const QUIZ_DATA = [
+      {
+        q: "Qual foi o primeiro milagre de Jesus?",
+        options: ["Andar sobre as águas", "Transformar água em vinho", "Curar um cego", "Multiplicar pães"],
+        correct: 1,
+        ref: "João 2:1-11 — As Bodas de Caná da Galileia."
+      },
+      {
+        q: "Quem construiu a arca?",
+        options: ["Moisés", "Noé", "Abraão", "Davi"],
+        correct: 1,
+        ref: "Gênesis 6:14 — Noé obedeceu a Deus construindo a arca."
+      },
+      {
+        q: "Quantos dias e noites choveu no dilúvio?",
+        options: ["40", "7", "12", "100"],
+        correct: 0,
+        ref: "Gênesis 7:12 — Choveu sobre a terra quarenta dias e quarenta noites."
+      },
+      {
+        q: "Quem foi engolido por um grande peixe?",
+        options: ["Pedro", "Jonas", "Paulo", "Elias"],
+        correct: 1,
+        ref: "Jonas 1:17 — Deus preparou um grande peixe para engolir Jonas."
+      },
+      {
+        q: "Quem recebeu as tábuas com os Dez Mandamentos?",
+        options: ["Moisés", "Josué", "Arão", "Samuel"],
+        correct: 0,
+        ref: "Êxodo 31:18 — Moisés no Monte Sinai."
+      },
+      {
+        q: "Quantos apóstolos Jesus escolheu?",
+        options: ["7", "10", "12", "40"],
+        correct: 2,
+        ref: "Lucas 6:13 — Escolheu doze deles, a quem chamou apóstolos."
+      },
+      {
+        q: "Quem traiu Jesus por 30 moedas de prata?",
+        options: ["Pedro", "Judas Iscariotes", "Tomé", "Filipe"],
+        correct: 1,
+        ref: "Mateus 26:14-15 — Judas Iscariotes negociou com os chefes dos sacerdotes."
+      },
+      {
+        q: "Em qual cidade Jesus nasceu?",
+        options: ["Nazaré", "Jerusalém", "Belém", "Cafarnaum"],
+        correct: 2,
+        ref: "Mateus 2:1 — Jesus nasceu em Belém da Judeia."
+      },
+      {
+        q: "Quantos livros tem o Novo Testamento?",
+        options: ["27", "39", "66", "12"],
+        correct: 0,
+        ref: "O Novo Testamento possui 27 livros (e o Antigo possui 39, total 66)."
+      },
+      {
+        q: "Quem foi lançado na cova dos leões e saiu ileso?",
+        options: ["Daniel", "José", "Samuel", "Jeremias"],
+        correct: 0,
+        ref: "Daniel 6:22 — O meu Deus enviou o seu anjo e fechou a boca dos leões."
+      },
+      {
+        q: "Qual era o nome do gigante derrotado por Davi?",
+        options: ["Golias", "Sansão", "Absalão", "Nabucodonosor"],
+        correct: 0,
+        ref: "1 Samuel 17 — Davi derrotou Golias de Gate com uma funda e uma pedra."
+      },
+      {
+        q: "O que Deus enviou do céu para alimentar o povo no deserto?",
+        options: ["Pão (maná)", "Peixes", "Uvas", "Mel"],
+        correct: 0,
+        ref: "Êxodo 16:31 — A casa de Israel chamou aquele pão de maná."
+      },
+      {
+        q: "Quem subiu em uma árvore para ver Jesus passar?",
+        options: ["Zaqueu", "Nicodemos", "Bartimeu", "Pedro"],
+        correct: 0,
+        ref: "Lucas 19:4 — Zaqueu subiu num sicômoro para ver Jesus."
+      },
+      {
+        q: "Qual é o primeiro livro da Bíblia?",
+        options: ["Êxodo", "Gênesis", "Salmos", "Mateus"],
+        correct: 1,
+        ref: "Gênesis 1:1 — 'No princípio criou Deus os céus e a terra.'"
+      },
+      {
+        q: "Quem foi lançado na fornalha e não se queimou?",
+        options: ["Daniel", "Sadraque, Mesaque e Abednego", "Elias", "José"],
+        correct: 1,
+        ref: "Daniel 3 — Os três jovens hebreus foram preservados por Deus no fogo ardente."
+      }
+    ];
+
+    const FRUITS = [
+      "AMOR", "PAZ", "ALEGRIA", "BONDADE",
+      "FIDELIDADE", "MANSIDÃO", "PACIÊNCIA", "DOMÍNIO"
+    ];
+
+    const MEMORY_PAIRS = [
+      { id: 1, name: "Noé", emoji: "🧔🏻", matchId: 101, matchName: "Arca", matchEmoji: "🚢" },
+      { id: 2, name: "Davi", emoji: "👑", matchId: 102, matchName: "Funda", matchEmoji: "🪨" },
+      { id: 3, name: "Moisés", emoji: "📜", matchId: 103, matchName: "Tábuas", matchEmoji: "🗒️" },
+      { id: 4, name: "Sansão", emoji: "🦁", matchId: 104, matchName: "Força", matchEmoji: "💪" },
+      { id: 5, name: "Jonas", emoji: "🌊", matchId: 105, matchName: "Peixe", matchEmoji: "🐋" },
+      { id: 6, name: "Adão", emoji: "🍎", matchId: 106, matchName: "Éden", matchEmoji: "🌳" },
+      { id: 7, name: "Salomão", emoji: "⚖️", matchId: 107, matchName: "Sabedoria", matchEmoji: "👑" },
+      { id: 8, name: "Pedro", emoji: "⛵", matchId: 108, matchName: "Pescador", matchEmoji: "🎣" }
+    ];
+
+    const HANGMAN_WORDS = [
+      { word: "ZAQUEU", hint: "Subiu numa árvore para ver Jesus" },
+      { word: "NOÉ", hint: "Construiu a arca por ordem de Deus" },
+      { word: "MOISÉS", hint: "Recebeu as tábuas com os Dez Mandamentos" },
+      { word: "GOLIAS", hint: "Gigante filisteu derrotado por Davi" },
+      { word: "BELÉM", hint: "Cidade onde Jesus nasceu" },
+      { word: "MANÁ", hint: "Pão que Deus enviou do céu no deserto" },
+      { word: "GALILEIA", hint: "Região onde Jesus andou sobre as águas" },
+      { word: "JERUSALÉM", hint: "A Cidade Santa" }
+    ];
+
+    const RIDDLES_DATA = [
+      {
+        q: "Sou pequeno, mas derrubei um gigante. Quem sou eu?",
+        answer: "A pedra de Davi",
+        keywords: ["pedra", "funda"]
+      },
+      {
+        q: "Deus me enviou do céu para alimentar o povo no deserto. O que sou?",
+        answer: "O maná",
+        keywords: ["mana", "maná", "pao", "pão"]
+      },
+      {
+        q: "Tenho 66 livros e conto a maior história de amor do mundo. O que sou?",
+        answer: "A Bíblia Sagrada",
+        keywords: ["biblia", "bíblia", "escritura", "palavra"]
+      },
+      {
+        q: "Sou feita de madeira e salvei minha família e os animais. O que sou?",
+        answer: "A arca de Noé",
+        keywords: ["arca", "noe", "noé"]
+      },
+      {
+        q: "Moro no mar e engoli um profeta que fugia de Deus. Quem sou?",
+        answer: "O grande peixe (baleia)",
+        keywords: ["peixe", "baleia", "grande peixe"]
+      },
+      {
+        q: "Quatro amigos subiram no telhado e me desceram até Jesus. Quem sou?",
+        answer: "O paralítico curado",
+        keywords: ["paralitico", "paralítico", "homem", "enfermo"]
+      },
+      {
+        q: "Tenho dez palavras muito importantes escritas em pedra. O que sou?",
+        answer: "As tábuas da Lei (Dez Mandamentos)",
+        keywords: ["mandamento", "mandamentos", "tabuas", "tábuas", "lei"]
+      },
+      {
+        q: "Sou uma estrela e guiei os magos até Jesus. O que sou?",
+        answer: "A estrela de Belém",
+        keywords: ["estrela", "belem", "belém"]
+      },
+      {
+        q: "Nasci no estábulo e me tornei Rei dos reis. Quem sou?",
+        answer: "Jesus Cristo",
+        keywords: ["jesus", "cristo", "messias"]
+      },
+      {
+        q: "Três vezes Pedro negou que me conhecia, mas eu o perdoei. Quem sou?",
+        answer: "Jesus",
+        keywords: ["jesus", "cristo", "senhor"]
+      }
+    ];
+
+    /**
+     * MOTOR PRINCIPAL DO JOGO
+     */
+    class GameEngine {
+      constructor() {
+        this.globalScore = 0;
+        this.loadScore();
+        this.initEvents();
+      }
+
+      loadScore() {
+        const saved = localStorage.getItem('cristo_vive_score');
+        this.globalScore = saved ? parseInt(saved, 10) : 0;
+        this.updateScoreDisplay();
+      }
+
+      addPoints(pts) {
+        this.globalScore += pts;
+        localStorage.setItem('cristo_vive_score', this.globalScore);
+        this.updateScoreDisplay();
+      }
+
+      resetScore() {
+        if (confirm("Deseja realmente zerar sua pontuação geral?")) {
+          this.globalScore = 0;
+          localStorage.setItem('cristo_vive_score', 0);
+          this.updateScoreDisplay();
+          alert("Placar zerado com sucesso!");
+        }
+      }
+
+      updateScoreDisplay() {
+        const el = document.getElementById('globalScoreText');
+        if (el) el.textContent = `${this.globalScore} pts`;
+      }
+
+      switchView(viewId) {
+        document.querySelectorAll('.game-view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(viewId);
+        if (target) target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      goToMenu() {
+        if (this.memoryTimerInterval) clearInterval(this.memoryTimerInterval);
+        this.switchView('viewMenu');
+      }
+
+      showVictory(title, msg, emoji = '🏆') {
+        sound.playWin();
+        document.getElementById('vicTitle').textContent = title;
+        document.getElementById('vicMsg').textContent = msg;
+        document.getElementById('vicEmoji').textContent = emoji;
+        document.getElementById('modalVictory').classList.add('active');
+      }
+
+      closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+      }
+
+      initEvents() {
+        document.getElementById('soundToggleBtn').addEventListener('click', () => {
+          const on = sound.toggle();
+          document.getElementById('soundIcon').textContent = on ? '🔊 Som' : '🔇 Mudo';
+        });
+
+        document.getElementById('howToPlayBtn').addEventListener('click', () => {
+          document.getElementById('modalHowToPlay').classList.add('active');
+        });
+
+        document.getElementById('resetScoreBtn').addEventListener('click', () => {
+          this.resetScore();
+        });
+
+        // Escuta teclado físico para a Forca
+        window.addEventListener('keydown', (e) => {
+          const hmView = document.getElementById('viewHangman');
+          if (hmView && hmView.classList.contains('active')) {
+            const letter = e.key.toUpperCase();
+            if (/^[A-Z]$/.test(letter)) {
+              this.handleHangmanGuess(letter);
+            }
+          }
+        });
+      }
+
+      /* ----------------------------------------------------
+       * MODO 1: QUIZ BÍBLICO
+       * ---------------------------------------------------- */
+      startQuiz() {
+        this.quizIndex = 0;
+        this.quizScore = 0;
+        this.switchView('viewQuiz');
+        document.getElementById('quizCard').style.display = 'block';
+        document.getElementById('quizResultCard').style.display = 'none';
+        this.loadQuizQuestion();
+      }
+
+      loadQuizQuestion() {
+        const q = QUIZ_DATA[this.quizIndex];
+        const total = QUIZ_DATA.length;
+
+        document.getElementById('quizIndexText').textContent = `Pergunta ${this.quizIndex + 1} de ${total}`;
+        document.getElementById('quizScoreHeader').textContent = `Acertos: ${this.quizScore}/${total}`;
+        document.getElementById('quizProgressFill').style.width = `${((this.quizIndex) / total) * 100}%`;
+        document.getElementById('quizQuestionText').textContent = q.q;
+
+        const optGrid = document.getElementById('quizOptionsGrid');
+        optGrid.innerHTML = '';
+
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'answer-btn';
+          btn.innerHTML = `<span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:#e2e8f0; font-size:0.85rem; font-weight:800; color:#334155;">${letters[idx]}</span> <span>${opt}</span>`;
+          btn.onclick = () => this.handleQuizAnswer(idx);
+          optGrid.appendChild(btn);
+        });
+
+        const feedback = document.getElementById('quizFeedbackBox');
+        feedback.className = 'feedback-box';
+        feedback.innerHTML = '';
+        document.getElementById('quizNextBtn').style.display = 'none';
+      }
+
+      handleQuizAnswer(selectedIdx) {
+        const q = QUIZ_DATA[this.quizIndex];
+        const optButtons = document.querySelectorAll('#quizOptionsGrid .answer-btn');
+        optButtons.forEach(b => b.disabled = true);
+
+        const feedback = document.getElementById('quizFeedbackBox');
+        const isCorrect = selectedIdx === q.correct;
+
+        if (isCorrect) {
+          sound.playCorrect();
+          optButtons[selectedIdx].classList.add('correct');
+          feedback.className = 'feedback-box correct show';
+          feedback.innerHTML = `<strong>✅ Resposta Correta! (+10 pts)</strong><br><span style="font-size:0.88rem; opacity:0.95;">📖 ${q.ref}</span>`;
+          this.quizScore++;
+          this.addPoints(10);
+        } else {
+          sound.playWrong();
+          optButtons[selectedIdx].classList.add('wrong');
+          optButtons[q.correct].classList.add('correct');
+          feedback.className = 'feedback-box wrong show';
+          feedback.innerHTML = `<strong>❌ Incorreto! A resposta correta era: ${q.options[q.correct]}</strong><br><span style="font-size:0.88rem; opacity:0.95;">📖 ${q.ref}</span>`;
+        }
+
+        document.getElementById('quizScoreHeader').textContent = `Acertos: ${this.quizScore}/${QUIZ_DATA.length}`;
+        document.getElementById('quizNextBtn').style.display = 'inline-flex';
+      }
+
+      nextQuizQuestion() {
+        this.quizIndex++;
+        if (this.quizIndex < QUIZ_DATA.length) {
+          this.loadQuizQuestion();
+        } else {
+          // Fim do Quiz
+          document.getElementById('quizProgressFill').style.width = '100%';
+          document.getElementById('quizCard').style.display = 'none';
+          document.getElementById('quizResultCard').style.display = 'block';
+          const total = QUIZ_DATA.length;
+          document.getElementById('quizFinalMsg').textContent = 
+            `Você acertou ${this.quizScore} de ${total} perguntas e somou ${this.quizScore * 10} pontos para a glória de Deus!`;
+          sound.playWin();
+        }
+      }
+
+      /* ----------------------------------------------------
+       * MODO 2: CAÇA-PALAVRAS (Frutos do Espírito)
+       * ---------------------------------------------------- */
+      startWordSearch() {
+        this.switchView('viewWordSearch');
+        this.wsSize = 12;
+        this.wsGrid = Array.from({ length: this.wsSize }, () => Array(this.wsSize).fill(''));
+        this.wsFoundWords = new Set();
+        this.wsSelectedStart = null;
+        this.wsSelectionCells = [];
+
+        // Colocar palavras na grade
+        this.placeWordSearchWords();
+        this.renderWordSearch();
+      }
+
+      placeWordSearchWords() {
+        // Normaliza as palavras retirando acentos para caber no grid
+        const cleanFruits = FRUITS.map(f => ({
+          original: f,
+          clean: f.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase()
+        }));
+
+        const dirs = [
+          [0, 1],   // horizontal dir
+          [0, -1],  // horizontal esq
+          [1, 0],   // vertical baixo
+          [-1, 0],  // vertical cima
+          [1, 1],   // diag baixo-dir
+          [-1, 1],  // diag cima-dir
+          [1, -1]   // diag baixo-esq
+        ];
+
+        cleanFruits.forEach(item => {
+          let placed = false;
+          let attempts = 0;
+          while (!placed && attempts < 200) {
+            attempts++;
+            const dir = dirs[Math.floor(Math.random() * dirs.length)];
+            const rStart = Math.floor(Math.random() * this.wsSize);
+            const cStart = Math.floor(Math.random() * this.wsSize);
+            const len = item.clean.length;
+            const rEnd = rStart + dir[0] * (len - 1);
+            const cEnd = cStart + dir[1] * (len - 1);
+
+            if (rEnd >= 0 && rEnd < this.wsSize && cEnd >= 0 && cEnd < this.wsSize) {
+              let canPlace = true;
+              for (let i = 0; i < len; i++) {
+                const r = rStart + dir[0] * i;
+                const c = cStart + dir[1] * i;
+                if (this.wsGrid[r][c] !== '' && this.wsGrid[r][c] !== item.clean[i]) {
+                  canPlace = false;
+                  break;
+                }
+              }
+
+              if (canPlace) {
+                for (let i = 0; i < len; i++) {
+                  const r = rStart + dir[0] * i;
+                  const c = cStart + dir[1] * i;
+                  this.wsGrid[r][c] = item.clean[i];
+                }
+                placed = true;
+              }
+            }
+          }
+        });
+
+        // Preenche vazios com letras aleatórias
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let r = 0; r < this.wsSize; r++) {
+          for (let c = 0; c < this.wsSize; c++) {
+            if (this.wsGrid[r][c] === '') {
+              this.wsGrid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+            }
+          }
+        }
+      }
+
+      renderWordSearch() {
+        const gridEl = document.getElementById('wsGrid');
+        gridEl.innerHTML = '';
+        document.getElementById('wsCounterText').textContent = `Encontrados: 0 / ${FRUITS.length}`;
+
+        for (let r = 0; r < this.wsSize; r++) {
+          for (let c = 0; c < this.wsSize; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.textContent = this.wsGrid[r][c];
+            cell.dataset.r = r;
+            cell.dataset.c = c;
+            cell.onclick = () => this.handleWordSearchCellClick(r, c);
+            gridEl.appendChild(cell);
+          }
+        }
+
+        // Renderiza Badges
+        const badgesEl = document.getElementById('wsBadges');
+        badgesEl.innerHTML = '';
+        FRUITS.forEach(f => {
+          const pill = document.createElement('span');
+          pill.className = 'word-pill';
+          pill.id = `ws-pill-${f}`;
+          pill.textContent = f;
+          badgesEl.appendChild(pill);
+        });
+      }
+
+      handleWordSearchCellClick(r, c) {
+        if (!this.wsSelectedStart) {
+          // Primeiro clique: início da palavra
+          this.wsSelectedStart = { r, c };
+          this.highlightCell(r, c, true);
+        } else {
+          // Segundo clique: fim da seleção
+          const start = this.wsSelectedStart;
+          const end = { r, c };
+          this.checkWordSearchSelection(start, end);
+          this.clearSelectionHighlight();
+          this.wsSelectedStart = null;
+        }
+      }
+
+      highlightCell(r, c, isSelected) {
+        const cell = document.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
+        if (cell) {
+          if (isSelected) cell.classList.add('selected');
+          else cell.classList.remove('selected');
+        }
+      }
+
+      clearSelectionHighlight() {
+        document.querySelectorAll('.grid-cell.selected').forEach(c => c.classList.remove('selected'));
+      }
+
+      checkWordSearchSelection(start, end) {
+        const dr = end.r - start.r;
+        const dc = end.c - start.c;
+        const stepR = dr === 0 ? 0 : dr / Math.abs(dr);
+        const stepC = dc === 0 ? 0 : dc / Math.abs(dc);
+
+        // Verifica se é uma reta (horizontal, vertical ou diagonal perfeita 45º)
+        const isHorizontal = dr === 0 && dc !== 0;
+        const isVertical = dc === 0 && dr !== 0;
+        const isDiagonal = Math.abs(dr) === Math.abs(dc) && dr !== 0;
+
+        if (!isHorizontal && !isVertical && !isDiagonal) {
+          sound.playWrong();
+          return;
+        }
+
+        const length = Math.max(Math.abs(dr), Math.abs(dc)) + 1;
+        let constructedWord = "";
+        const pathCoords = [];
+
+        for (let i = 0; i < length; i++) {
+          const r = start.r + stepR * i;
+          const c = start.c + stepC * i;
+          constructedWord += this.wsGrid[r][c];
+          pathCoords.push({ r, c });
+        }
+
+        const reversedWord = constructedWord.split('').reverse().join('');
+
+        // Procura entre as frutas
+        for (let fruit of FRUITS) {
+          const cleanFruit = fruit.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+          if ((constructedWord === cleanFruit || reversedWord === cleanFruit) && !this.wsFoundWords.has(fruit)) {
+            // Palavra encontrada!
+            sound.playCorrect();
+            this.wsFoundWords.add(fruit);
+            pathCoords.forEach(coord => {
+              const el = document.querySelector(`.grid-cell[data-r="${coord.r}"][data-c="${coord.c}"]`);
+              if (el) el.classList.add('found');
+            });
+            const pill = document.getElementById(`ws-pill-${fruit}`);
+            if (pill) pill.classList.add('found');
+
+            document.getElementById('wsCounterText').textContent = `Encontrados: ${this.wsFoundWords.size} / ${FRUITS.length}`;
+
+            if (this.wsFoundWords.size === FRUITS.length) {
+              this.addPoints(50);
+              this.showVictory(
+                "Parabéns!",
+                "Você encontrou todos os 8 Frutos do Espírito (Gálatas 5:22-23) e ganhou +50 pontos!",
+                "🕊️"
+              );
+            }
+            return;
+          }
+        }
+        sound.playWrong();
+      }
+
+      /* ----------------------------------------------------
+       * MODO 3: JOGO DA MEMÓRIA
+       * ---------------------------------------------------- */
+      startMemory() {
+        this.switchView('viewMemory');
+        this.memoryFlippedCards = [];
+        this.memoryMatches = 0;
+        this.memoryMoves = 0;
+        this.memorySeconds = 0;
+        this.memoryLock = false;
+
+        if (this.memoryTimerInterval) clearInterval(this.memoryTimerInterval);
+        this.memoryTimerInterval = setInterval(() => {
+          this.memorySeconds++;
+          const mins = String(Math.floor(this.memorySeconds / 60)).padStart(2, '0');
+          const secs = String(this.memorySeconds % 60).padStart(2, '0');
+          document.getElementById('memoryTimerText').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        document.getElementById('memoryMovesText').textContent = '0';
+        document.getElementById('memoryMatchesText').textContent = 'Pares: 0 / 8';
+
+        // Monta 16 cartas (8 pares)
+        const deck = [];
+        MEMORY_PAIRS.forEach(p => {
+          deck.push({ pairGroup: p.id, label: p.name, emoji: p.emoji });
+          deck.push({ pairGroup: p.id, label: p.matchName, emoji: p.matchEmoji });
+        });
+
+        // Embaralhar (Fisher-Yates)
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+
+        const board = document.getElementById('memoryBoard');
+        board.innerHTML = '';
+        deck.forEach((card, index) => {
+          const cardEl = document.createElement('div');
+          cardEl.className = 'memory-card';
+          cardEl.dataset.index = index;
+          cardEl.dataset.pairGroup = card.pairGroup;
+          cardEl.innerHTML = `
+            <div class="memory-inner">
+              <div class="memory-front">✝</div>
+              <div class="memory-back">
+                <span class="memory-emoji">${card.emoji}</span>
+                <span class="memory-text">${card.label}</span>
+              </div>
+            </div>
+          `;
+          cardEl.onclick = () => this.handleMemoryCardClick(cardEl);
+          board.appendChild(cardEl);
+        });
+      }
+
+      handleMemoryCardClick(cardEl) {
+        if (this.memoryLock) return;
+        if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+        cardEl.classList.add('flipped');
+        this.memoryFlippedCards.push(cardEl);
+
+        if (this.memoryFlippedCards.length === 2) {
+          this.memoryMoves++;
+          document.getElementById('memoryMovesText').textContent = this.memoryMoves;
+          const [card1, card2] = this.memoryFlippedCards;
+
+          if (card1.dataset.pairGroup === card2.dataset.pairGroup) {
+            // Par correto!
+            sound.playCorrect();
+            card1.classList.add('matched');
+            card2.classList.add('matched');
+            this.memoryMatches++;
+            this.addPoints(5);
+            document.getElementById('memoryMatchesText').textContent = `Pares: ${this.memoryMatches} / 8`;
+            this.memoryFlippedCards = [];
+
+            if (this.memoryMatches === 8) {
+              clearInterval(this.memoryTimerInterval);
+              const mins = String(Math.floor(this.memorySeconds / 60)).padStart(2, '0');
+              const secs = String(this.memorySeconds % 60).padStart(2, '0');
+              this.showVictory(
+                "Vitória Memorável!",
+                `Você encontrou todos os 8 pares bíblicos em ${mins}:${secs} e ${this.memoryMoves} tentativas (+40 pontos totais)!`,
+                "⭐"
+              );
+            }
+          } else {
+            // Não formou par
+            sound.playWrong();
+            this.memoryLock = true;
+            setTimeout(() => {
+              card1.classList.remove('flipped');
+              card2.classList.remove('flipped');
+              this.memoryFlippedCards = [];
+              this.memoryLock = false;
+            }, 900);
+          }
+        }
+      }
+
+      /* ----------------------------------------------------
+       * MODO 4: FORCA BÍBLICA
+       * ---------------------------------------------------- */
+      startHangman() {
+        this.switchView('viewHangman');
+        this.hangmanIndex = 0;
+        this.loadHangmanWord();
+      }
+
+      loadHangmanWord() {
+        const item = HANGMAN_WORDS[this.hangmanIndex];
+        this.hangmanWord = item.word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        this.hangmanOriginalWord = item.word;
+        this.hangmanErrors = 0;
+        this.hangmanGuessedLetters = new Set();
+        this.hangmanFinished = false;
+
+        document.getElementById('hangmanWordIndex').textContent = `Palavra ${this.hangmanIndex + 1} de ${HANGMAN_WORDS.length}`;
+        document.getElementById('hangmanHintText').textContent = `💡 Dica: ${item.hint}`;
+        document.getElementById('hangmanMessage').textContent = '';
+        document.getElementById('hangmanNextBtn').style.display = 'none';
+
+        // Esconder partes do boneco
+        for (let i = 1; i <= 6; i++) {
+          const part = document.getElementById(`hm-part-${i}`);
+          if (part) part.style.display = 'none';
+        }
+
+        this.renderHangmanSlots();
+        this.renderHangmanKeyboard();
+      }
+
+      renderHangmanSlots() {
+        const slotsEl = document.getElementById('hangmanSlots');
+        slotsEl.innerHTML = '';
+
+        for (let i = 0; i < this.hangmanWord.length; i++) {
+          const char = this.hangmanWord[i];
+          const slot = document.createElement('div');
+          slot.className = 'letter-slot';
+          if (this.hangmanGuessedLetters.has(char) || this.hangmanFinished) {
+            slot.textContent = this.hangmanOriginalWord[i];
+          } else {
+            slot.textContent = '';
+          }
+          slotsEl.appendChild(slot);
+        }
+      }
+
+      renderHangmanKeyboard() {
+        const kb = document.getElementById('hangmanKeyboard');
+        kb.innerHTML = '';
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        alphabet.split('').forEach(letter => {
+          const btn = document.createElement('button');
+          btn.className = 'key-btn';
+          btn.textContent = letter;
+          btn.id = `hm-key-${letter}`;
+          btn.onclick = () => this.handleHangmanGuess(letter);
+          kb.appendChild(btn);
+        });
+      }
+
+      handleHangmanGuess(letter) {
+        if (this.hangmanFinished || this.hangmanGuessedLetters.has(letter)) return;
+
+        this.hangmanGuessedLetters.add(letter);
+        const keyBtn = document.getElementById(`hm-key-${letter}`);
+
+        if (this.hangmanWord.includes(letter)) {
+          sound.playCorrect();
+          if (keyBtn) keyBtn.classList.add('correct');
+          this.renderHangmanSlots();
+
+          // Checa se acertou tudo
+          const allGuessed = this.hangmanWord.split('').every(ch => this.hangmanGuessedLetters.has(ch));
+          if (allGuessed) {
+            this.hangmanFinished = true;
+            this.addPoints(15);
+            document.getElementById('hangmanMessage').innerHTML = `<span style="color:#16a34a;">🎉 Glória a Deus! Você acertou (+15 pts)!</span>`;
+            document.getElementById('hangmanNextBtn').style.display = 'inline-flex';
+            sound.playWin();
+          }
+        } else {
+          sound.playWrong();
+          this.hangmanErrors++;
+          if (keyBtn) keyBtn.classList.add('wrong');
+          const part = document.getElementById(`hm-part-${this.hangmanErrors}`);
+          if (part) part.style.display = 'block';
+
+          if (this.hangmanErrors >= 6) {
+            this.hangmanFinished = true;
+            this.renderHangmanSlots();
+            document.getElementById('hangmanMessage').innerHTML = `<span style="color:#dc2626;">Fim de jogo! A palavra era <strong>${this.hangmanOriginalWord}</strong>.</span>`;
+            document.getElementById('hangmanNextBtn').style.display = 'inline-flex';
+          }
+        }
+      }
+
+      nextHangmanWord() {
+        this.hangmanIndex++;
+        if (this.hangmanIndex < HANGMAN_WORDS.length) {
+          this.loadHangmanWord();
+        } else {
+          this.showVictory(
+            "Forca Bíblica Concluída!",
+            "Você explorou todas as palavras da Forca Bíblica! Excelente dedicação às Escrituras!",
+            "✝️"
+          );
+        }
+      }
+
+      /* ----------------------------------------------------
+       * MODO 5: CHARADAS BÍBLICAS
+       * ---------------------------------------------------- */
+      startRiddles() {
+        this.switchView('viewRiddles');
+        this.riddleIndex = 0;
+        this.riddleAnswered = false;
+        this.loadRiddle();
+      }
+
+      loadRiddle() {
+        const r = RIDDLES_DATA[this.riddleIndex];
+        document.getElementById('riddleNavIndicator').textContent = `Charada ${this.riddleIndex + 1} de ${RIDDLES_DATA.length}`;
+        document.getElementById('riddleQuestionText').textContent = r.q;
+        document.getElementById('riddleInput').value = '';
+        document.getElementById('riddleInput').disabled = false;
+        document.getElementById('riddleAnswerBox').className = 'riddle-answer-box';
+        document.getElementById('riddleAnswerBox').innerHTML = '';
+        this.riddleAnswered = false;
+      }
+
+      normalizeStr(str) {
+        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+      }
+
+      submitRiddleAnswer(e) {
+        e.preventDefault();
+        if (this.riddleAnswered) return;
+
+        const input = document.getElementById('riddleInput');
+        const userVal = this.normalizeStr(input.value);
+        if (!userVal) return;
+
+        const r = RIDDLES_DATA[this.riddleIndex];
+        const match = r.keywords.some(kw => userVal.includes(this.normalizeStr(kw)));
+
+        const box = document.getElementById('riddleAnswerBox');
+        if (match) {
+          sound.playCorrect();
+          this.riddleAnswered = true;
+          this.addPoints(10);
+          input.disabled = true;
+          box.className = 'riddle-answer-box show';
+          box.style.background = '#ecfdf5';
+          box.style.borderColor = '#86efac';
+          box.style.color = '#065f46';
+          box.innerHTML = `<strong>✅ Exatamente! Você acertou (+10 pts)!</strong><br>Resposta: ${r.answer}`;
+        } else {
+          sound.playWrong();
+          box.className = 'riddle-answer-box show';
+          box.style.background = '#fef2f2';
+          box.style.borderColor = '#fca5a5';
+          box.style.color = '#991b1b';
+          box.innerHTML = `<strong>Tente novamente!</strong> Seu palpite "${input.value}" ainda não é a resposta certa.`;
+        }
+      }
+
+      revealRiddleAnswer() {
+        const r = RIDDLES_DATA[this.riddleIndex];
+        const box = document.getElementById('riddleAnswerBox');
+        box.className = 'riddle-answer-box show';
+        box.style.background = '#f1f5f9';
+        box.style.borderColor = '#cbd5e1';
+        box.style.color = '#1e293b';
+        box.innerHTML = `<strong>Resposta:</strong> ${r.answer}`;
+        this.riddleAnswered = true;
+        document.getElementById('riddleInput').disabled = true;
+      }
+
+      nextRiddle() {
+        this.riddleIndex++;
+        if (this.riddleIndex < RIDDLES_DATA.length) {
+          this.loadRiddle();
+        } else {
+          this.showVictory(
+            "Charadas Concluídas!",
+            "Você passou por todas as 10 charadas bíblicas! Muito bem!",
+            "🙏"
+          );
+        }
+      }
+    }
+
+    // Instanciação global
+    let gameEngine;
+    document.addEventListener('DOMContentLoaded', () => {
+      gameEngine = new GameEngine();
+    });
+  </script>
+<script>
+/* Skip artifact shell — fixed helpers served beside every artifact. */
+(function () {
+  "use strict";
+
+  var fmt = {
+    num: function (v, opts) { return new Intl.NumberFormat("pt-BR", opts || {}).format(v); },
+    brl: function (v) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v); },
+    pct: function (v) { return new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 1 }).format(v); }
+  };
+
+  // axisFmt keeps axis tick labels short (compact notation) so long values
+  // (e.g. full BRL amounts) never clip against the plot edge.
+  function axisFmt(v) {
+    return fmt.num(v, { notation: "compact", maximumFractionDigits: 1 });
+  }
+
+  // format accepts a function OR one of the fmt names ("num" | "brl" | "pct").
+  function coerceFormat(spec) {
+    if (typeof spec === "function") return spec;
+    if (typeof spec === "string" && fmt[spec]) return fmt[spec];
+    return function (v) { return fmt.num(v); };
+  }
+
+  function accent() {
+    return getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#2563eb";
+  }
+  function mutedColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue("--text-muted").trim() || "#5b6472";
+  }
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+  function frame(el, w, h) {
+    var svg = svgEl("svg", { viewBox: "0 0 " + w + " " + h, role: "img" });
+    el.innerHTML = "";
+    el.appendChild(svg);
+    return svg;
+  }
+
+  // maxOf guards the axis scale: empty values would give -Infinity (truthy,
+  // so "|| 1" can't catch it) and a non-positive max would flip the chart.
+  function maxOf(values) {
+    var m = values.length ? Math.max.apply(null, values) : 0;
+    return m > 0 ? m : 1;
+  }
+
+  // bar(el, {labels:[], values:[], color?, format?}) — vertical bar chart.
+  function bar(el, cfg) {
+    var W = 640, H = 280, padL = 46, padB = 30, padT = 12;
+    var svg = frame(el, W, H);
+    var max = maxOf(cfg.values);
+    var n = cfg.values.length;
+    var plotW = W - padL - 12, plotH = H - padT - padB;
+    var step = plotW / n, bw = Math.min(step * 0.62, 64);
+    var color = cfg.color || accent();
+    var f = coerceFormat(cfg.format);
+    for (var g = 0; g <= 4; g++) {
+      var gy = padT + plotH - (plotH * g) / 4;
+      svg.appendChild(svgEl("line", { x1: padL, y1: gy, x2: W - 12, y2: gy, stroke: "currentColor", "stroke-opacity": 0.08 }));
+      var lbl = svgEl("text", { x: padL - 8, y: gy + 4, "text-anchor": "end", "font-size": 10, fill: mutedColor() });
+      lbl.textContent = axisFmt((max * g) / 4);
+      svg.appendChild(lbl);
+    }
+    cfg.values.forEach(function (v, i) {
+      var bh = Math.max(0, (v / max) * plotH);
+      var x = padL + i * step + (step - bw) / 2;
+      var y = padT + plotH - bh;
+      var r = svgEl("rect", { x: x, y: y, width: bw, height: bh, rx: 4, fill: color });
+      var t = svgEl("title", {});
+      t.textContent = cfg.labels[i] + ": " + f(v);
+      r.appendChild(t);
+      svg.appendChild(r);
+      var tx = svgEl("text", { x: x + bw / 2, y: H - 10, "text-anchor": "middle", "font-size": 11, fill: mutedColor() });
+      tx.textContent = cfg.labels[i];
+      svg.appendChild(tx);
+    });
+  }
+
+  // line(el, {labels:[], values:[], color?, format?}) — single-series line.
+  function line(el, cfg) {
+    var W = 640, H = 280, padL = 46, padB = 30, padT = 12;
+    var svg = frame(el, W, H);
+    var max = maxOf(cfg.values);
+    var n = cfg.values.length;
+    var plotW = W - padL - 16, plotH = H - padT - padB;
+    var color = cfg.color || accent();
+    var f = coerceFormat(cfg.format);
+    for (var g = 0; g <= 4; g++) {
+      var gy = padT + plotH - (plotH * g) / 4;
+      svg.appendChild(svgEl("line", { x1: padL, y1: gy, x2: W - 16, y2: gy, stroke: "currentColor", "stroke-opacity": 0.08 }));
+      var lbl = svgEl("text", { x: padL - 8, y: gy + 4, "text-anchor": "end", "font-size": 10, fill: mutedColor() });
+      lbl.textContent = axisFmt((max * g) / 4);
+      svg.appendChild(lbl);
+    }
+    var pts = cfg.values.map(function (v, i) {
+      var x = padL + (n === 1 ? plotW / 2 : (plotW * i) / (n - 1));
+      var y = padT + plotH - (v / max) * plotH;
+      return [x, y];
+    });
+    var d = pts.map(function (p, i) { return (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+    svg.appendChild(svgEl("path", { d: d, fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round" }));
+    pts.forEach(function (p, i) {
+      var c = svgEl("circle", { cx: p[0], cy: p[1], r: 3.5, fill: color });
+      var t = svgEl("title", {});
+      t.textContent = cfg.labels[i] + ": " + f(cfg.values[i]);
+      c.appendChild(t);
+      svg.appendChild(c);
+      var tx = svgEl("text", { x: p[0], y: H - 10, "text-anchor": "middle", "font-size": 11, fill: mutedColor() });
+      tx.textContent = cfg.labels[i];
+      svg.appendChild(tx);
+    });
+  }
+
+  // donut(el, {labels:[], values:[], colors?}) — donut with center total.
+  function donut(el, cfg) {
+    var W = 320, H = 280, cx = W / 2, cy = H / 2, R = 92, r = 58;
+    var svg = frame(el, W, H);
+    var total = cfg.values.reduce(function (a, b) { return a + b; }, 0) || 1;
+    var palette = cfg.colors || [accent(), "#1baf7a", "#eda100", "#e34948", "#4a3aa7", "#e87ba4"];
+    var a0 = -Math.PI / 2;
+    cfg.values.forEach(function (v, i) {
+      var a1 = a0 + (v / total) * Math.PI * 2;
+      var large = a1 - a0 > Math.PI ? 1 : 0;
+      var p = ["M", cx + R * Math.cos(a0), cy + R * Math.sin(a0),
+        "A", R, R, 0, large, 1, cx + R * Math.cos(a1), cy + R * Math.sin(a1),
+        "L", cx + r * Math.cos(a1), cy + r * Math.sin(a1),
+        "A", r, r, 0, large, 0, cx + r * Math.cos(a0), cy + r * Math.sin(a0), "Z"].join(" ");
+      var path = svgEl("path", { d: p, fill: palette[i % palette.length] });
+      var t = svgEl("title", {});
+      t.textContent = cfg.labels[i] + ": " + fmt.num(v) + " (" + fmt.pct(v / total) + ")";
+      path.appendChild(t);
+      svg.appendChild(path);
+      a0 = a1;
+    });
+    var center = svgEl("text", { x: cx, y: cy + 5, "text-anchor": "middle", "font-size": 20, "font-weight": 650, fill: "currentColor" });
+    center.textContent = fmt.num(total);
+    svg.appendChild(center);
+  }
+
+  window.skipShell = { fmt: fmt };
+  window.skipChart = { bar: bar, line: line, donut: donut };
+})();
+
+</script>
+</body>
+</html>
